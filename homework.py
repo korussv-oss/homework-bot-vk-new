@@ -121,7 +121,7 @@ def check_response(response):
     if not isinstance(homeworks, list):
         raise TypeError(
             'Данные по ключу homeworks должны быть списком, '
-            f'получен {type(homeworks)}'
+            f'получены {type(homeworks)}'
         )
     return homeworks
 
