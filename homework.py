@@ -113,7 +113,6 @@ def check_response(response):
             f'Ответ API должен быть словарём, получен {type(response)}'
         )
     if 'homeworks' not in response:
-        logging.error('Отсутствует ожидаемый ключ homeworks в ответе API')
         raise APIResponseError(
             'Отсутствует ожидаемый ключ homeworks в ответе API'
         )
@@ -161,16 +160,17 @@ def main():
                 logging.debug('Отсутствие в ответе новых статусов')
                 continue
             message = parse_status(homeworks[0])
-            if message != last_message:
-                if send_message(vk, message):
-                    last_message = message
-            timestamp = response.get('current_date', timestamp)
+            if message != last_message and send_message(vk, message):
+                last_message = message
+                timestamp = response.get('current_date', timestamp)
         except Exception as error:
             current_message = f'Сбой в работе программы: {error}'
-            logging.error(current_message)
-            if current_message != last_message:
-                if send_message(vk, current_message):
-                    last_message = current_message
+            logging.exception(current_message)
+            if (
+                current_message != last_message
+                and send_message(vk, current_message)
+            ):
+                last_message = current_message
         finally:
             time.sleep(RETRY_PERIOD)
 
